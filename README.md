@@ -1,3 +1,13 @@
+---
+title: CrowdFlow AI Backend
+emoji: 🚦
+colorFrom: blue
+colorTo: indigo
+sdk: docker
+app_port: 7860
+pinned: false
+---
+
 # Traffic Final Backend
 
 This repository contains the backend API for the Traffic Final project. It exposes a unified FastAPI service that performs road scene analysis, congestion estimation, road closure prediction, disruption prediction, and routing over a Bengaluru road graph.
@@ -24,69 +34,71 @@ This repository contains the backend API for the Traffic Final project. It expos
 ## Prerequisites
 
 - Python 3.10 or newer
-- Git (optional, for cloning)
-- [Optional] GPU with CUDA for faster YOLO inference, but CPU mode works too
+- Docker (for containerised deployment)
 
-## Setup and local run
+## Local run (without Docker)
 
-1. Open a terminal in the repository folder:
-   ```powershell
-   cd C:\Users\supra\OneDrive\Documents\Traffic_Final_Backend
-   ```
-
-2. Create and activate a virtual environment:
-   ```powershell
+1. Create and activate a virtual environment:
+   ```bash
    python -m venv .venv
-   .\.venv\Scripts\Activate.ps1
+   source .venv/bin/activate   # Windows: .\.venv\Scripts\Activate.ps1
    ```
 
-3. Install dependencies:
-   ```powershell
+2. Install dependencies:
+   ```bash
    pip install --upgrade pip
    pip install -r requirements.txt
    ```
 
-4. Start the API server with Uvicorn:
-   ```powershell
-   uvicorn main_api:app --host 0.0.0.0 --port 8000 --reload
+3. Start the API server:
+   ```bash
+   uvicorn main_api:app --host 0.0.0.0 --port 7860 --reload
    ```
 
-5. Open the API docs in your browser:
-   - `http://127.0.0.1:8000/docs`
+4. Open the interactive docs: `http://127.0.0.1:7860/docs`
+
+## Local run (with Docker)
+
+```bash
+docker build -t crowdflow-local .
+docker run --rm -p 7860:7860 crowdflow-local
+```
+
+Then visit `http://localhost:7860/docs`.
 
 ## Usage
 
 ### Analyze endpoint
 
-POST `/analyze`
+`POST /analyze`
 
 Form-data fields:
 
-- `file` — image file upload
-- `road_block_reason` — text describing the incident (e.g. `accident`)
-- `latitude` — incident latitude
-- `longitude` — incident longitude
-- `zone` — zone label
-- `corridor` — corridor label
-- `junction` — optional junction label
+| Field | Type | Description |
+|-------|------|-------------|
+| `file` | image | Road scene image |
+| `road_block_reason` | string | Incident type (e.g. `accident`) |
+| `latitude` | float | Incident latitude |
+| `longitude` | float | Incident longitude |
+| `zone` | string | Zone label |
+| `corridor` | string | Corridor label |
+| `junction` | string | Optional junction label |
 
 ### Routing endpoints
-
-The API includes `/routing` endpoints:
 
 - `POST /routing/nearest-main-road` — find nearest main roads
 - `POST /routing/local-bypass` — find bypass around an accident location
 - `POST /routing/event-aware-route` — compute a route weighted by live events
 
-Use the built-in Swagger UI at `/docs` to explore request models and try the endpoints interactively.
+Use the Swagger UI at `/docs` to explore request models and try the endpoints interactively.
 
 ## Notes
 
-- The app downloads model bundles from Hugging Face at runtime for road closure and traffic disruption prediction.
+- The app downloads model bundles from Hugging Face Hub at startup for road closure and traffic disruption prediction.
 - Routing uses a local `Traffic_routing/bengaluru_crowdflow.graphml` graph and event CSV data.
-- If you want to change the model device, update `detector = CrowdFlowDetector(model_name=..., device="cpu")` in `main_api.py`.
+- CPU inference is used by default; update `device="cuda"` in `main_api.py` if a GPU is available.
 
 ## Troubleshooting
 
-- If dependency installation fails, ensure `pip` is using the correct Python interpreter from the activated virtual environment.
 - If the API cannot load the graph, verify that `Traffic_routing/bengaluru_crowdflow.graphml` exists and is readable.
+- If HF Hub model downloads fail, ensure the `HF_TOKEN` secret is set in Space Settings if the model repos are private.

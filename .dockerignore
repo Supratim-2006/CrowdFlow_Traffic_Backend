@@ -1,5 +1,39 @@
-__pycache__/
-*.pyc
+# Version control
+.git
+.gitignore
+
+# Python artifacts
+__pycache__
+*.py[cod]
 *.pyo
-.venv/
-.git/
+*.egg-info
+dist/
+build/
+.eggs/
+
+# Virtual environments
+.venv
+venv
+env
+
+# IDE / OS
+.idea
+.vscode
+.DS_Store
+*.swp
+
+# Notebooks & experiments
+*.ipynb
+notebooks/
+
+# Large local data you don't want in the image
+# (models are downloaded from HF Hub at build/runtime)
+*.pt
+*.pth
+*.onnx
+*.pkl
+
+# Logs / temp
+*.log
+tmp/
+temp/
