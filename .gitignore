@@ -1,0 +1,21 @@
+# Python virtual environment
+.venv/
+
+# OS and editor files
+__pycache__/
+*.pyc
+*.pyo
+*.pyd
+.DS_Store
+Thumbs.db
+
+# Data and large files
+*.part
+*.tmp
+*.log
+*.csv
+
+# GraphML routing data
+bengaluru_crowdflow2.graphml
+bengaluru_crowdflow.graphml
+bengaluru_crowflow.graphmli_dl2fds.part
