@@ -21,13 +21,14 @@ pydantic==2.9.0
 optuna>=4.0.0
 xgboost>=1.7.6
 lightgbm==4.0.0
-imblearn==0.0
 
-osmnx==1.6.1
-networkx==3.4
+imbalanced-learn==0.12.4
+
+osmnx==1.6.0
+networkx==3.3
+
 scipy==1.11.4
-
 httpx==0.28.0
+
 rtree==1.0.1
 shapely==2.0.1
-osmnx>=1.6.0,<1.7.0
